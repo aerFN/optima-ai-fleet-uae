@@ -10,7 +10,11 @@ import {
   Code, 
   Settings, 
   LogOut, 
-  Bell
+  Bell,
+  Route,
+  Gauge,
+  Shield,
+  Zap
 } from "lucide-react";
 
 // Logo component for FleetAIOptima
@@ -30,11 +34,18 @@ const Logo = () => (
 
 const navigationItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
-  { name: "Map View", path: "/map", icon: Map },
-  { name: "Vehicles", path: "/vehicles", icon: Car },
-  { name: "Drivers", path: "/drivers", icon: User },
-  { name: "Automation", path: "/automation", icon: Code },
-  { name: "Settings", path: "/settings", icon: Settings },
+  { name: "Map View", path: "/map", icon: Map, badge: "Route Optimization" },
+  { name: "Vehicles", path: "/vehicles", icon: Car, badge: "Predictive Maintenance" },
+  { name: "Drivers", path: "/drivers", icon: User, badge: "Safety Analytics" },
+  { name: "Automation", path: "/automation", icon: Code, badge: "Workflow Builder" },
+  { name: "Settings", path: "/settings", icon: Settings, badge: "UAE Compliance" },
+];
+
+const featureItems = [
+  { name: "Route Optimization", path: "/map", icon: Route, description: "13% fuel savings" },
+  { name: "Predictive Maintenance", path: "/vehicles", icon: Gauge, description: "95% accuracy" },
+  { name: "Driver Safety", path: "/drivers", icon: Shield, description: "60% accident reduction" },
+  { name: "Automation", path: "/automation", icon: Zap, description: "31% efficiency gain" }
 ];
 
 interface NavItemProps {
@@ -42,6 +53,7 @@ interface NavItemProps {
     name: string;
     path: string;
     icon: React.ElementType;
+    badge?: string;
   };
   isActive: boolean;
 }
@@ -64,11 +76,49 @@ const NavItem = ({ item, isActive }: NavItemProps) => {
         isActive ? "text-awr-primary" : "text-muted-foreground group-hover:text-foreground"
       )} />
       <span>{item.name}</span>
-      {item.name === "Dashboard" && (
+      {item.badge && (
         <span className="ml-auto text-xs font-medium px-1.5 py-0.5 rounded-full bg-awr-primary/10 text-awr-primary">
-          New
+          {item.badge}
         </span>
       )}
+    </Link>
+  );
+};
+
+interface FeatureNavItemProps {
+  item: {
+    name: string;
+    path: string;
+    icon: React.ElementType;
+    description: string;
+  };
+  isActive: boolean;
+}
+
+// Feature NavItem with description
+const FeatureNavItem = ({ item, isActive }: FeatureNavItemProps) => {
+  const Icon = item.icon;
+  
+  return (
+    <Link
+      to={item.path}
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+        "hover:bg-accent group",
+        isActive ? "bg-accent font-medium text-accent-foreground" : "text-muted-foreground"
+      )}
+    >
+      <Icon size={18} className={cn(
+        "flex-shrink-0 transition-colors",
+        isActive ? "text-awr-primary" : "text-muted-foreground group-hover:text-foreground"
+      )} />
+      <div className="flex-1 min-w-0">
+        <span className={cn(
+          "block text-sm",
+          isActive ? "font-medium text-foreground" : "group-hover:text-foreground"
+        )}>{item.name}</span>
+        <span className="text-xs text-muted-foreground">{item.description}</span>
+      </div>
     </Link>
   );
 };
@@ -90,9 +140,26 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-auto py-2 px-2">
-        <div className="space-y-1">
+        <div className="space-y-1 mb-6">
           {navigationItems.map((item) => (
             <NavItem
+              key={item.name}
+              item={item}
+              isActive={
+                currentPath === item.path ||
+                (item.path !== "/" && currentPath.startsWith(item.path))
+              }
+            />
+          ))}
+        </div>
+        
+        <div className="mt-6 mb-2 px-4">
+          <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Key Features</h3>
+        </div>
+        
+        <div className="space-y-1">
+          {featureItems.map((item) => (
+            <FeatureNavItem
               key={item.name}
               item={item}
               isActive={
