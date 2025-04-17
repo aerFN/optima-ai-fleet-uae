@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { SidebarContent } from "./SidebarContent";
 
 export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,17 +14,19 @@ export function Layout() {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Desktop Sidebar */}
-      <Sidebar />
+      <div className="hidden md:block w-64 shrink-0 border-r bg-card">
+        <SidebarContent />
+      </div>
       
       {/* Mobile Sidebar as Sheet */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-64 p-0">
-          <Sidebar />
+          <SidebarContent />
         </SheetContent>
       </Sheet>
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:ml-64">
+      <div className="flex-1 flex flex-col">
         <Header toggleSidebar={toggleSidebar} />
         <main className="flex-1 container py-6">
           <Outlet />
