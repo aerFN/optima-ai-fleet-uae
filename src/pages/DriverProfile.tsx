@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,7 +32,6 @@ export default function DriverProfile() {
     { name: "Perfect Attendance", date: "2024-08", description: "100% on-time rate for 6 months" },
   ];
 
-  // Safety score chart data (simulated)
   const safetyScoreData = {
     current: 87,
     previous: 82,
@@ -229,7 +227,6 @@ export default function DriverProfile() {
                 </div>
               </div>
               
-              {/* Placeholder for an actual chart */}
               <div className="bg-slate-50 h-64 rounded-lg flex items-center justify-center">
                 <p className="text-muted-foreground">Safety score trend chart would appear here</p>
               </div>
@@ -249,7 +246,11 @@ export default function DriverProfile() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium">{incident.type}</h4>
-                          <Badge variant={incident.severity === "High" ? "destructive" : incident.severity === "Medium" ? "warning" : "outline"}>
+                          <Badge variant={
+                            incident.severity === "High" ? "destructive" : 
+                            incident.severity === "Medium" ? "warning" : 
+                            "outline"
+                          }>
                             {incident.severity}
                           </Badge>
                         </div>

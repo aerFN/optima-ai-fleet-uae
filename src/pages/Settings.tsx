@@ -5,254 +5,293 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { 
-  Settings as SettingsIcon, 
-  Shield, 
-  Users, 
-  Database, 
-  Key, 
-  Bell, 
-  Lock, 
-  LogOut, 
-  Check, 
-  ChevronRight, 
-  Building2
-} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LockKeyhole, Shield, Users, Bell, Globe, HardDrive, Key, Database, FileText, Smartphone as Phone } from "lucide-react";
 
 export default function Settings() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [dataBackupEnabled, setDataBackupEnabled] = useState(true);
-  const [blockchainVerificationEnabled, setBlockchainVerificationEnabled] = useState(true);
+  const [userRole, setUserRole] = useState("fleet-manager");
+  const [dataRegion, setDataRegion] = useState("uae");
   
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-1">Settings & Compliance</h1>
-          <p className="text-muted-foreground">Manage account settings, UAE compliance, and security</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-1">Settings</h1>
+          <p className="text-muted-foreground">Manage your account, compliance, and security settings</p>
         </div>
         
         <div className="flex flex-wrap gap-3">
-          <Badge variant="outline" className="bg-awr-primary/5 text-awr-primary font-medium px-3 py-1 flex items-center gap-1">
-            <Shield className="h-3.5 w-3.5" />
+          <Badge variant="outline" className="bg-awr-success/10 text-awr-success border border-awr-success/20 flex gap-1 items-center">
+            <div className="h-2 w-2 rounded-full bg-awr-success"></div>
             <span>UAE Compliant</span>
+          </Badge>
+          <Badge variant="outline" className="bg-awr-primary/10 text-awr-primary">
+            AWR Secure
           </Badge>
         </div>
       </div>
-
+      
       <Tabs defaultValue="account" className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 h-auto">
-          <TabsTrigger value="account" className="flex gap-2 py-2 h-auto">
+        <TabsList>
+          <TabsTrigger value="account" className="gap-2">
             <Users className="h-4 w-4" />
-            <div className="text-left">
-              <p>Account</p>
-              <p className="text-xs text-muted-foreground font-normal">User management</p>
-            </div>
+            <span>Account</span>
           </TabsTrigger>
-          <TabsTrigger value="security" className="flex gap-2 py-2 h-auto">
+          <TabsTrigger value="notifications" className="gap-2">
+            <Bell className="h-4 w-4" />
+            <span>Notifications</span>
+          </TabsTrigger>
+          <TabsTrigger value="compliance" className="gap-2">
             <Shield className="h-4 w-4" />
-            <div className="text-left">
-              <p>Security</p>
-              <p className="text-xs text-muted-foreground font-normal">Access & permissions</p>
-            </div>
+            <span>Compliance</span>
           </TabsTrigger>
-          <TabsTrigger value="compliance" className="flex gap-2 py-2 h-auto">
-            <Building2 className="h-4 w-4" />
-            <div className="text-left">
-              <p>UAE Compliance</p>
-              <p className="text-xs text-muted-foreground font-normal">Local regulations</p>
-            </div>
-          </TabsTrigger>
-          <TabsTrigger value="data" className="flex gap-2 py-2 h-auto">
-            <Database className="h-4 w-4" />
-            <div className="text-left">
-              <p>Data</p>
-              <p className="text-xs text-muted-foreground font-normal">Backup & protection</p>
-            </div>
+          <TabsTrigger value="security" className="gap-2">
+            <LockKeyhole className="h-4 w-4" />
+            <span>Security</span>
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="account" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Manage user accounts and permissions</CardDescription>
+              <CardTitle>User Profile</CardTitle>
+              <CardDescription>Update your personal information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Account Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" defaultValue="Ahmad Mohammed" />
+                    <Input id="name" placeholder="Ahmad Mohammed" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" defaultValue="ahmad.m@awr.com" />
+                    <Input id="email" type="email" placeholder="ahmad.m@awr.ae" />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                        +971
+                      </span>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        className="rounded-l-none"
+                        placeholder="55 123 4567"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Input id="role" defaultValue="Fleet Manager" disabled />
+                    <Select value={userRole} onValueChange={setUserRole}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fleet-manager">Fleet Manager</SelectItem>
+                        <SelectItem value="dispatcher">Dispatcher</SelectItem>
+                        <SelectItem value="admin">Administrator</SelectItem>
+                        <SelectItem value="analyst">Data Analyst</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="department">Department</Label>
-                    <Input id="department" defaultValue="Operations" />
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Select defaultValue="gulf">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select timezone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gulf">Gulf Standard Time (GST)</SelectItem>
+                        <SelectItem value="utc">Coordinated Universal Time (UTC)</SelectItem>
+                        <SelectItem value="eastern">Eastern Standard Time (EST)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-4 pt-6 border-t">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">Team Members</h3>
-                  <Button size="sm">Add User</Button>
-                </div>
-                
-                <div className="space-y-3">
-                  {["Fatima Hassan", "Mohammed Al Qasim", "Sarah Ahmed"].map((user, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 border rounded-md">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center">
-                          <span className="font-medium text-slate-500">{user.split(' ').map(n => n[0]).join('')}</span>
-                        </div>
-                        <div>
-                          <p className="font-medium">{user}</p>
-                          <p className="text-xs text-muted-foreground">{["Operations Manager", "Driver Coordinator", "Data Analyst"][i]}</p>
-                        </div>
-                      </div>
-                      <button className="text-sm text-awr-primary hover:underline">Edit Permissions</button>
-                    </div>
-                  ))}
-                </div>
+              <div className="pt-4 border-t flex justify-end">
+                <Button>Save Changes</Button>
               </div>
-              
-              <div className="pt-6 border-t">
-                <div className="flex justify-between items-center">
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-medium">Notifications</h3>
-                    <p className="text-sm text-muted-foreground">Manage your notification preferences</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Preferences</CardTitle>
+              <CardDescription>Customize your account settings</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Language</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Select your preferred language
+                    </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      id="notifications" 
-                      checked={notificationsEnabled}
-                      onCheckedChange={setNotificationsEnabled}
-                    />
-                    <Label htmlFor="notifications">
-                      {notificationsEnabled ? "Enabled" : "Disabled"}
-                    </Label>
-                  </div>
+                  <Select defaultValue="en">
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="ar">Arabic</SelectItem>
+                      <SelectItem value="hi">Hindi</SelectItem>
+                      <SelectItem value="ur">Urdu</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
-                {notificationsEnabled && (
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="email-notif" className="rounded" defaultChecked />
-                      <label htmlFor="email-notif" className="text-sm">Email notifications</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="sms-notif" className="rounded" defaultChecked />
-                      <label htmlFor="sms-notif" className="text-sm">SMS notifications</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="app-notif" className="rounded" defaultChecked />
-                      <label htmlFor="app-notif" className="text-sm">In-app notifications</label>
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Date Format</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Choose how dates are displayed
+                    </p>
                   </div>
-                )}
+                  <Select defaultValue="mdy">
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="dmy">DD/MM/YYYY</SelectItem>
+                      <SelectItem value="mdy">MM/DD/YYYY</SelectItem>
+                      <SelectItem value="ymd">YYYY/MM/DD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Distance Unit</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Kilometers or miles
+                    </p>
+                  </div>
+                  <Select defaultValue="km">
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="km">Kilometers (km)</SelectItem>
+                      <SelectItem value="mi">Miles (mi)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Mobile App Integration</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Link your mobile device
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">Connected</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
-        <TabsContent value="security" className="space-y-4">
+        <TabsContent value="notifications" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage password and authentication options</CardDescription>
+              <CardTitle>Notification Preferences</CardTitle>
+              <CardDescription>Control how and when you receive alerts</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent>
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">Password</h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm New Password</Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                </div>
-                
-                <Button className="mt-2">Update Password</Button>
-              </div>
-              
-              <div className="pt-6 border-t">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium">Two-Factor Authentication</h3>
-                  <Button variant="outline">Enable</Button>
-                </div>
-                <p className="text-sm text-muted-foreground">Add an extra layer of security by enabling two-factor authentication.</p>
-              </div>
-              
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">Access Logs</h3>
-                <div className="space-y-3">
-                  {[
-                    { user: "Ahmad Mohammed", action: "Login", date: "2025-04-17 08:32 AM", ip: "185.76.xxx.xxx" },
-                    { user: "Ahmad Mohammed", action: "Password Changed", date: "2025-04-10 02:15 PM", ip: "185.76.xxx.xxx" },
-                    { user: "Ahmad Mohammed", action: "Login", date: "2025-04-10 09:05 AM", ip: "185.76.xxx.xxx" },
-                  ].map((log, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 border rounded-md bg-accent/30">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <Key className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{log.action}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">{log.date} • IP: {log.ip}</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <div className="grid gap-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Vehicle Alerts</p>
+                      <p className="text-sm text-muted-foreground">
+                        Maintenance, fuel, and location alerts
+                      </p>
                     </div>
-                  ))}
-                </div>
-                
-                <Button variant="link" className="mt-2 p-0">View all access logs</Button>
-              </div>
-              
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">Active Sessions</h3>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between p-3 border rounded-md">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <Check className="h-5 w-5 text-green-500" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Current Session</p>
-                        <p className="text-xs text-muted-foreground">Dubai, UAE • Chrome on Windows</p>
-                      </div>
-                    </div>
-                    <Badge className="bg-green-100 text-green-700 border-0">Active</Badge>
+                    <Switch defaultChecked />
                   </div>
                   
-                  <div className="flex justify-between p-3 border rounded-md">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center">
-                        <Smartphone className="h-5 w-5 text-slate-500" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Mobile App</p>
-                        <p className="text-xs text-muted-foreground">Dubai, UAE • FleetAIOptima App on iOS</p>
-                      </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Driver Updates</p>
+                      <p className="text-sm text-muted-foreground">
+                        Safety scores and behavior alerts
+                      </p>
                     </div>
-                    <Button variant="destructive" size="sm">Logout</Button>
+                    <Switch defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Route Optimizations</p>
+                      <p className="text-sm text-muted-foreground">
+                        AI-suggested route improvements
+                      </p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">System Updates</p>
+                      <p className="text-sm text-muted-foreground">
+                        New features and maintenance notices
+                      </p>
+                    </div>
+                    <Switch />
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t space-y-4">
+                  <p className="text-sm font-medium">Notification Channels</p>
+                  
+                  <div className="grid gap-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">Email</Badge>
+                        <span className="text-sm">ahmad.m@awr.ae</span>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">SMS</Badge>
+                        <span className="text-sm">+971 55 123 4567</span>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="success">Mobile App</Badge>
+                        <span className="text-sm">FleetAIOptima App</span>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="warning">Desktop</Badge>
+                        <span className="text-sm">Browser Notifications</span>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -263,278 +302,218 @@ export default function Settings() {
         <TabsContent value="compliance" className="space-y-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>UAE Compliance Settings</CardTitle>
-                  <CardDescription>Manage compliance with local UAE regulations</CardDescription>
-                </div>
-                <Badge className="bg-green-100 text-green-700 border-0 flex items-center gap-1 px-3 py-1">
-                  <Shield className="h-3.5 w-3.5" />
-                  <span>Compliant</span>
-                </Badge>
-              </div>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-awr-primary" />
+                UAE Regulatory Compliance
+              </CardTitle>
+              <CardDescription>Manage data compliance settings for UAE regulations</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                <div className="flex gap-3">
-                  <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                    <Bell className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium mb-1">Compliance Alert</h3>
-                    <p className="text-sm">The UAE Transport Authority has updated its fleet data regulations. Your system is currently compliant, but will require updates by June 30, 2025.</p>
-                    
-                    <div className="mt-3">
-                      <Button size="sm" variant="outline">View Details</Button>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="bg-awr-primary/10 border border-awr-primary/20 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-1 p-1.5 rounded-md bg-awr-primary/20">
+                      <Shield className="h-5 w-5 text-awr-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">AWR Exclusive Data Control</h4>
+                      <p className="text-sm">Unlike competitors who use shared data models, FleetAIOptima keeps your fleet data exclusively within AWR's secure infrastructure in UAE-compliant data centers.</p>
+                      
+                      <div className="mt-3">
+                        <Badge variant="success">UAE Compliant ✓</Badge>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Data Localization</h3>
-                <p className="text-sm text-muted-foreground">UAE regulations require certain data to be stored locally within the country.</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border rounded-md p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Data Storage Location</h4>
-                      <Badge className="bg-green-100 text-green-700 border-0">Compliant</Badge>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <p className="font-medium">Data Region</p>
+                      <p className="text-sm text-muted-foreground">Select where your data is stored</p>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">UAE Data Center (Abu Dhabi)</p>
+                    <Select value={dataRegion} onValueChange={setDataRegion}>
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="uae">UAE (Dubai)</SelectItem>
+                        <SelectItem value="uae-ad">UAE (Abu Dhabi)</SelectItem>
+                        <SelectItem value="ksa">Saudi Arabia</SelectItem>
+                        <SelectItem value="qatar">Qatar</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="border rounded-md p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Data Encryption</h4>
-                      <Badge className="bg-green-100 text-green-700 border-0">Compliant</Badge>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <p className="font-medium">Data Retention</p>
+                      <p className="text-sm text-muted-foreground">How long to keep historical data</p>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">AES-256 Encryption</p>
+                    <Select defaultValue="5y">
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select period" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1y">1 Year</SelectItem>
+                        <SelectItem value="3y">3 Years</SelectItem>
+                        <SelectItem value="5y">5 Years</SelectItem>
+                        <SelectItem value="7y">7 Years (UAE Standard)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <p className="font-medium">GDPR Compliance</p>
+                      <p className="text-sm text-muted-foreground">For international operations</p>
+                    </div>
+                    <Switch defaultChecked />
                   </div>
                 </div>
-              </div>
-              
-              <div className="space-y-4 pt-6 border-t">
-                <div className="flex justify-between items-center">
+                
+                <div className="grid gap-4 pt-4 border-t">
                   <div>
-                    <h3 className="text-lg font-medium">Blockchain Verification</h3>
-                    <p className="text-sm text-muted-foreground">Secure audit trail using blockchain technology</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      id="blockchain" 
-                      checked={blockchainVerificationEnabled}
-                      onCheckedChange={setBlockchainVerificationEnabled}
-                    />
-                    <Label htmlFor="blockchain">
-                      {blockchainVerificationEnabled ? "Enabled" : "Disabled"}
-                    </Label>
-                  </div>
-                </div>
-                
-                {blockchainVerificationEnabled && (
-                  <div className="border rounded-md mt-3">
-                    <div className="p-3 border-b bg-slate-50">
-                      <h4 className="font-medium">Recent Verification Records</h4>
-                    </div>
-                    <div className="p-3 space-y-2">
-                      {[
-                        { type: "Driver Log", hash: "0x7f2c8d...", timestamp: "2025-04-17 09:15" },
-                        { type: "Maintenance Record", hash: "0x3a1b5c...", timestamp: "2025-04-16 14:32" },
-                        { type: "Route Optimization", hash: "0x9e4d2a...", timestamp: "2025-04-15 11:47" }
-                      ].map((record, i) => (
-                        <div key={i} className="text-sm flex justify-between items-center">
-                          <div>
-                            <span className="font-medium">{record.type}</span>
-                            <span className="text-xs text-muted-foreground ml-2">{record.timestamp}</span>
-                          </div>
-                          <span className="text-xs text-muted-foreground font-mono">{record.hash}</span>
+                    <p className="font-medium mb-2">Compliance Reports</p>
+                    <div className="space-y-2">
+                      <button className="w-full flex items-center justify-between p-2 border rounded-md hover:bg-accent">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">RTA Compliance Report</span>
                         </div>
-                      ))}
+                        <Badge variant="outline">Monthly</Badge>
+                      </button>
+                      
+                      <button className="w-full flex items-center justify-between p-2 border rounded-md hover:bg-accent">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">UAE Federal Transport Authority</span>
+                        </div>
+                        <Badge variant="outline">Quarterly</Badge>
+                      </button>
+                      
+                      <button className="w-full flex items-center justify-between p-2 border rounded-md hover:bg-accent">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">Data Security Audit</span>
+                        </div>
+                        <Badge variant="outline">Annual</Badge>
+                      </button>
                     </div>
                   </div>
-                )}
-              </div>
-              
-              <div className="space-y-4 pt-6 border-t">
-                <h3 className="text-lg font-medium">Driver Certification</h3>
-                <p className="text-sm text-muted-foreground">Track driver certifications required by UAE transport authorities</p>
-                
-                <div className="border rounded-md overflow-hidden">
-                  <table className="min-w-full">
-                    <thead className="bg-slate-50 text-xs uppercase">
-                      <tr>
-                        <th className="px-4 py-3 text-left">Driver Name</th>
-                        <th className="px-4 py-3 text-left">Certification</th>
-                        <th className="px-4 py-3 text-left">Status</th>
-                        <th className="px-4 py-3 text-left">Expiry</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y text-sm">
-                      {[
-                        { name: "Mohammed Abdullah", cert: "UAE Commercial License", status: "Valid", expiry: "2026-08-24" },
-                        { name: "Ahmed Hassan", cert: "UAE Commercial License", status: "Valid", expiry: "2025-11-15" },
-                        { name: "Fatima Al Zaabi", cert: "UAE Commercial License", status: "Expiring Soon", expiry: "2025-05-30" }
-                      ].map((driver, i) => (
-                        <tr key={i} className="hover:bg-accent/30">
-                          <td className="px-4 py-3">{driver.name}</td>
-                          <td className="px-4 py-3">{driver.cert}</td>
-                          <td className="px-4 py-3">
-                            <Badge variant={driver.status === "Valid" ? "success" : "warning"}>{driver.status}</Badge>
-                          </td>
-                          <td className="px-4 py-3">{new Date(driver.expiry).toLocaleDateString("en-AE")}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
-              </div>
-              
-              <div className="flex justify-center p-4 mt-4">
-                <Badge variant="outline" className="px-4 py-2 bg-awr-primary/5 text-awr-primary border-awr-primary/20 flex items-center gap-2">
-                  <Database className="h-4 w-4" />
-                  <span className="text-sm font-medium">Exclusive to AWR – UAE Compliant Data Control</span>
-                </Badge>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
-        <TabsContent value="data" className="space-y-4">
+        <TabsContent value="security" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Data Management</CardTitle>
-              <CardDescription>Manage your data backup and protection settings</CardDescription>
+              <CardTitle>Security Settings</CardTitle>
+              <CardDescription>Manage authentication and data protection</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg font-medium">Automated Data Backup</h3>
-                  <p className="text-sm text-muted-foreground">Schedule regular backups of your fleet data</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch 
-                    id="data-backup" 
-                    checked={dataBackupEnabled}
-                    onCheckedChange={setDataBackupEnabled}
-                  />
-                  <Label htmlFor="data-backup">
-                    {dataBackupEnabled ? "Enabled" : "Disabled"}
-                  </Label>
-                </div>
-              </div>
-              
-              {dataBackupEnabled && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="backup-frequency">Backup Frequency</Label>
-                    <select id="backup-frequency" className="w-full border rounded-md px-3 py-2">
-                      <option>Daily</option>
-                      <option>Weekly</option>
-                      <option>Monthly</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="retention-period">Data Retention Period</Label>
-                    <select id="retention-period" className="w-full border rounded-md px-3 py-2">
-                      <option>30 days</option>
-                      <option>90 days</option>
-                      <option>1 year</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-              
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">Recent Backups</h3>
-                
-                <div className="border rounded-md overflow-hidden">
-                  <table className="min-w-full">
-                    <thead className="bg-slate-50 text-xs uppercase">
-                      <tr>
-                        <th className="px-4 py-3 text-left">Date</th>
-                        <th className="px-4 py-3 text-left">Size</th>
-                        <th className="px-4 py-3 text-left">Status</th>
-                        <th className="px-4 py-3 text-left">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y text-sm">
-                      {[
-                        { date: "2025-04-17", size: "1.2 GB", status: "Completed" },
-                        { date: "2025-04-16", size: "1.2 GB", status: "Completed" },
-                        { date: "2025-04-15", size: "1.1 GB", status: "Completed" }
-                      ].map((backup, i) => (
-                        <tr key={i} className="hover:bg-accent/30">
-                          <td className="px-4 py-3">{new Date(backup.date).toLocaleDateString("en-AE")}</td>
-                          <td className="px-4 py-3">{backup.size}</td>
-                          <td className="px-4 py-3">
-                            <Badge variant="success">{backup.status}</Badge>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex gap-2">
-                              <button className="text-awr-primary hover:underline text-xs">Download</button>
-                              <button className="text-awr-primary hover:underline text-xs">Restore</button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                <div className="mt-4 flex justify-end">
-                  <Button>Create Manual Backup</Button>
-                </div>
-              </div>
-              
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">Data Export</h3>
-                <p className="text-sm text-muted-foreground mb-4">Export your fleet data for reporting or analysis</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="border rounded-md p-4 hover:bg-accent/30 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Database className="h-5 w-5 text-awr-primary" />
-                      <h4 className="font-medium">Vehicle Data</h4>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-3">Export vehicle telemetry, maintenance, and location data</p>
-                    <Button size="sm" variant="outline" className="w-full">Export CSV</Button>
-                  </div>
-                  
-                  <div className="border rounded-md p-4 hover:bg-accent/30 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Users className="h-5 w-5 text-awr-primary" />
-                      <h4 className="font-medium">Driver Data</h4>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-3">Export driver profiles, safety scores, and performance data</p>
-                    <Button size="sm" variant="outline" className="w-full">Export CSV</Button>
-                  </div>
-                  
-                  <div className="border rounded-md p-4 hover:bg-accent/30 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <SettingsIcon className="h-5 w-5 text-awr-primary" />
-                      <h4 className="font-medium">System Logs</h4>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-3">Export system logs, audit trails, and usage statistics</p>
-                    <Button size="sm" variant="outline" className="w-full">Export CSV</Button>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pt-6 border-t">
-                <div className="flex items-start gap-3 p-4 rounded-md bg-red-50 border border-red-200">
-                  <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <Lock className="h-5 w-5 text-red-500" />
-                  </div>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-1">Data Protection Notice</h4>
-                    <p className="text-sm">Your data is stored securely in UAE data centers in compliance with local regulations. All fleet data is encrypted and protected according to UAE data protection laws.</p>
-                    <div className="flex gap-2 mt-3">
-                      <Button size="sm" variant="destructive" className="flex items-center gap-2">
-                        <LogOut className="h-4 w-4" />
-                        <span>Request Data Deletion</span>
+                    <p className="font-medium mb-2">Two-Factor Authentication</p>
+                    <div className="flex items-center justify-between p-3 border rounded-md">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-awr-primary/10 rounded-md">
+                          <Key className="h-5 w-5 text-awr-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">2FA is enabled</p>
+                          <p className="text-xs text-muted-foreground">
+                            Using authenticator app
+                          </p>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        Configure
                       </Button>
-                      <Button size="sm" variant="outline">Privacy Policy</Button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="font-medium mb-2">Password Settings</p>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between p-3 border rounded-md">
+                        <span className="text-sm">Change Password</span>
+                        <Button variant="outline" size="sm">Update</Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 border rounded-md">
+                        <div>
+                          <p className="text-sm">Password Expires</p>
+                          <p className="text-xs text-muted-foreground">Every 90 days</p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <p className="font-medium mb-3">Blockchain Audit Trail</p>
+                  <div className="bg-accent/30 p-3 rounded-md">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-awr-primary/10 rounded-full">
+                        <Database className="h-4 w-4 text-awr-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Enabled</p>
+                        <p className="text-xs text-muted-foreground">All system changes are recorded securely</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                      <div className="p-2 bg-white/70 rounded-md shadow-sm">
+                        <p className="text-xs font-medium">Last Record</p>
+                        <p className="text-sm">10 min ago</p>
+                      </div>
+                      
+                      <div className="p-2 bg-white/70 rounded-md shadow-sm">
+                        <p className="text-xs font-medium">Block Height</p>
+                        <p className="text-sm">1,342,918</p>
+                      </div>
+                      
+                      <div className="p-2 bg-white/70 rounded-md shadow-sm">
+                        <p className="text-xs font-medium">Status</p>
+                        <p className="text-sm text-awr-success">Verified</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <div>
+                    <p className="font-medium mb-3">Data Security Features</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <HardDrive className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">End-to-end Encryption</span>
+                        </div>
+                        <Badge variant="success">Enabled</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">Data Anonymization</span>
+                        </div>
+                        <Badge variant="success">Enabled</Badge>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">Role-based Access Control</span>
+                        </div>
+                        <Badge variant="success">Enabled</Badge>
+                      </div>
                     </div>
                   </div>
                 </div>

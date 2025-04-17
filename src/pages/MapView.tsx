@@ -3,14 +3,39 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CompetitiveBadge } from "@/components/ui/competitive-badge";
 import { MapboxMap } from "@/components/map/MapboxMap";
-import { Car, Package2, Navigation, Filter, ChevronDown } from "lucide-react";
+import { 
+  Car, 
+  Package2, 
+  Navigation, 
+  Filter, 
+  ChevronDown, 
+  Cloud, 
+  CloudSun, 
+  Thermometer, 
+  Clock, 
+  AlertTriangle 
+} from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export default function MapView() {
   const [vehicleType, setVehicleType] = useState("all");
   const [vehicleStatus, setVehicleStatus] = useState("all");
+  const [mapScenario, setMapScenario] = useState<"normal" | "heavy">("normal");
+
+  // Handle scenario toggle
+  const handleScenarioChange = (scenario: "normal" | "heavy") => {
+    setMapScenario(scenario);
+    toast({
+      title: `Switched to ${scenario === "normal" ? "Normal Traffic" : "Heavy Traffic"} scenario`,
+      description: scenario === "normal" 
+        ? "Showing standard routes with regular traffic conditions." 
+        : "Showing AI-optimized routes to avoid heavy traffic areas.",
+    });
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -30,6 +55,59 @@ export default function MapView() {
           <Badge variant="outline" className="bg-awr-primary/5 text-awr-primary">
             UAE Traffic Integration
           </Badge>
+        </div>
+      </div>
+
+      <div className="bg-accent/20 p-4 rounded-lg flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-8 bg-awr-primary rounded-full"></div>
+            <div>
+              <p className="text-sm font-medium">Fuel Savings</p>
+              <p className="text-2xl font-bold">13%</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-8 bg-awr-success rounded-full"></div>
+            <div>
+              <p className="text-sm font-medium">Downtime Reduction</p>
+              <p className="text-2xl font-bold">30%</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-8 bg-amber-500 rounded-full"></div>
+            <div>
+              <p className="text-sm font-medium">Accident Risk Reduction</p>
+              <p className="text-2xl font-bold">60%</p>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium whitespace-nowrap">Traffic Scenario:</span>
+            <div className="flex rounded-md overflow-hidden">
+              <Button
+                variant={mapScenario === "normal" ? "default" : "outline"}
+                className={`rounded-r-none ${mapScenario === "normal" ? '' : 'text-muted-foreground'}`}
+                onClick={() => handleScenarioChange("normal")}
+              >
+                Normal Day
+              </Button>
+              <Button
+                variant={mapScenario === "heavy" ? "default" : "outline"}
+                className={`rounded-l-none ${mapScenario === "heavy" ? '' : 'text-muted-foreground'}`}
+                onClick={() => handleScenarioChange("heavy")}
+              >
+                Heavy Traffic Day
+              </Button>
+            </div>
+          </div>
+          {mapScenario === "heavy" && (
+            <p className="text-xs text-right mt-1 text-awr-primary">AI routes shown as dashed blue lines</p>
+          )}
         </div>
       </div>
 
@@ -82,7 +160,7 @@ export default function MapView() {
         <TabsContent value="map" className="p-0 border-none">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
-              <MapboxMap />
+              <MapboxMap scenario={mapScenario} />
             </div>
             
             <div className="space-y-6">
@@ -95,9 +173,9 @@ export default function MapView() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Traffic Level</label>
                     <div className="grid grid-cols-3 gap-2">
-                      <button className="px-3 py-1.5 text-xs rounded-md border hover:bg-accent">Low</button>
-                      <button className="px-3 py-1.5 text-xs rounded-md border bg-accent font-medium">Medium</button>
-                      <button className="px-3 py-1.5 text-xs rounded-md border hover:bg-accent">High</button>
+                      <button className={`px-3 py-1.5 text-xs rounded-md border ${mapScenario === 'normal' && 'bg-accent font-medium'}`} onClick={() => handleScenarioChange("normal")}>Low</button>
+                      <button className="px-3 py-1.5 text-xs rounded-md border hover:bg-accent">Medium</button>
+                      <button className={`px-3 py-1.5 text-xs rounded-md border ${mapScenario === 'heavy' && 'bg-accent font-medium'}`} onClick={() => handleScenarioChange("heavy")}>High</button>
                     </div>
                   </div>
                   
@@ -121,11 +199,65 @@ export default function MapView() {
                   <div className="pt-2 space-y-2 border-t">
                     <div className="flex justify-between text-sm">
                       <span>Estimated Fuel Savings:</span>
-                      <span className="font-bold text-awr-success">13.2%</span>
+                      <span className="font-bold text-awr-success">{mapScenario === 'heavy' ? '19.2%' : '13.2%'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Estimated Time Savings:</span>
-                      <span className="font-bold text-awr-success">18.5%</span>
+                      <span className="font-bold text-awr-success">{mapScenario === 'heavy' ? '24.5%' : '18.5%'}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">UAE Insights</CardTitle>
+                  <CardDescription>Real-time local information</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y">
+                    <div className="flex gap-3 p-3">
+                      <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <AlertTriangle className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Traffic Alert</p>
+                        <p className="text-xs text-muted-foreground">Heavy traffic on Sheikh Zayed Road</p>
+                        <p className="text-xs text-muted-foreground">Dubai • Live</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 p-3">
+                      <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                        <CloudSun className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Weather Alert</p>
+                        <p className="text-xs text-muted-foreground">Sandstorm warning in effect</p>
+                        <p className="text-xs text-muted-foreground">Abu Dhabi • Next 24h</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 p-3">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <Thermometer className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Temperature</p>
+                        <p className="text-xs text-muted-foreground">Currently 38°C / 100.4°F</p>
+                        <p className="text-xs text-muted-foreground">Dubai • 15 min ago</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 p-3">
+                      <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Transit Time</p>
+                        <p className="text-xs text-muted-foreground">12% faster than average</p>
+                        <p className="text-xs text-muted-foreground">UAE National Routes • Today</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -150,14 +282,14 @@ export default function MapView() {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate">
-                            {i === 1 && "SUV-2381"}
-                            {i === 2 && "VAN-9042"}
-                            {i === 3 && "TRK-5674"}
+                            {i === 1 && "Toyota Land Cruiser"}
+                            {i === 2 && "Nissan Altima"}
+                            {i === 3 && "Mitsubishi Fuso"}
                           </p>
                           <p className="text-xs text-muted-foreground truncate">
-                            {i === 1 && "In transit • 5 min away"}
+                            {i === 1 && "In transit • Dubai to Abu Dhabi"}
                             {i === 2 && "Idle • Sheikh Zayed Road"}
-                            {i === 3 && "In transit • Dubai Mall"}
+                            {i === 3 && "In transit • Dubai to Sharjah"}
                           </p>
                         </div>
                         <ChevronDown className="ml-auto h-4 w-4 text-muted-foreground" />

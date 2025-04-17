@@ -2,45 +2,134 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CompetitiveBadge } from "@/components/ui/competitive-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Code, Save, Zap, PlusCircle, Info, Send, Calendar, AlertTriangle, Car, ArrowRight, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CompetitiveBadge } from "@/components/ui/competitive-badge";
+import { 
+  Code, 
+  Save, 
+  Play, 
+  Copy, 
+  Trash2, 
+  Workflow, 
+  Zap, 
+  Plus, 
+  MessageSquarePlus,
+  ListChecks,
+  Wrench,
+  BellRing,
+  AlertTriangle,
+  LucideIcon,
+} from "lucide-react";
+
+// Automation node types
+type NodeType = 'trigger' | 'condition' | 'action' | 'notification';
+
+interface AutomationNode {
+  id: string;
+  type: NodeType;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+}
+
+// Library of available nodes
+const nodeLibrary: AutomationNode[] = [
+  {
+    id: 'fuel_low',
+    type: 'trigger',
+    title: 'Fuel Level Low',
+    description: 'Triggers when a vehicle\'s fuel falls below 20%',
+    icon: AlertTriangle,
+    color: 'bg-awr-warning/20 border-awr-warning/30 text-awr-warning',
+  },
+  {
+    id: 'maintenance_due',
+    type: 'trigger',
+    title: 'Maintenance Due',
+    description: 'Triggers when maintenance is scheduled within 7 days',
+    icon: Wrench,
+    color: 'bg-awr-primary/20 border-awr-primary/30 text-awr-primary',
+  },
+  {
+    id: 'driver_safety',
+    type: 'trigger',
+    title: 'Safety Incident',
+    description: 'Triggers when driver has a safety violation',
+    icon: AlertTriangle,
+    color: 'bg-awr-danger/20 border-awr-danger/30 text-awr-danger',
+  },
+  {
+    id: 'check_vehicle',
+    type: 'condition',
+    title: 'Check Vehicle Type',
+    description: 'Evaluates the type of vehicle (SUV, Sedan, etc.)',
+    icon: ListChecks,
+    color: 'bg-indigo-100 border-indigo-200 text-indigo-700',
+  },
+  {
+    id: 'check_location',
+    type: 'condition',
+    title: 'Check Location',
+    description: 'Evaluates if vehicle is in a specific area',
+    icon: ListChecks,
+    color: 'bg-indigo-100 border-indigo-200 text-indigo-700',
+  },
+  {
+    id: 'schedule_maintenance',
+    type: 'action',
+    title: 'Schedule Maintenance',
+    description: 'Creates a maintenance appointment',
+    icon: Wrench,
+    color: 'bg-green-100 border-green-200 text-green-700',
+  },
+  {
+    id: 'send_notification',
+    type: 'notification',
+    title: 'Send Notification',
+    description: 'Sends an alert to specified users',
+    icon: BellRing,
+    color: 'bg-blue-100 border-blue-200 text-blue-700',
+  },
+  {
+    id: 'email_manager',
+    type: 'notification',
+    title: 'Email Manager',
+    description: 'Sends detailed report to fleet manager',
+    icon: MessageSquarePlus,
+    color: 'bg-blue-100 border-blue-200 text-blue-700',
+  }
+];
 
 export default function AutomationBuilder() {
-  const [activeWorkflow, setActiveWorkflow] = useState("fuel-alerts");
+  const [activeNodes, setActiveNodes] = useState<AutomationNode[]>([]);
+  const [activeWorkflow, setActiveWorkflow] = useState("fuel-alert");
   
+  // Add node to workflow
+  const addNode = (node: AutomationNode) => {
+    setActiveNodes([...activeNodes, { ...node, id: `${node.id}-${Date.now()}` }]);
+  };
+  
+  // Remove node from workflow
+  const removeNode = (nodeId: string) => {
+    setActiveNodes(activeNodes.filter(node => node.id !== nodeId));
+  };
+  
+  // Sample pre-built workflows
   const workflows = [
-    { 
-      id: "fuel-alerts", 
-      name: "Fuel Level Alerts", 
-      description: "Send notifications when fuel levels are low",
-      lastEdited: "2025-04-12",
-      status: "active" 
-    },
-    { 
-      id: "maintenance-scheduler", 
-      name: "Auto Maintenance Scheduler", 
-      description: "Schedule maintenance based on AI predictions",
-      lastEdited: "2025-04-05",
-      status: "active" 
-    },
-    { 
-      id: "driver-alerts", 
-      name: "Driver Safety Alerts", 
-      description: "Alert managers on safety violations",
-      lastEdited: "2025-03-28",
-      status: "draft" 
-    },
+    { id: "fuel-alert", name: "Fuel Alert", nodeCount: 3, status: "active" },
+    { id: "maintenance", name: "Maintenance Scheduler", nodeCount: 5, status: "active" },
+    { id: "driver-safety", name: "Driver Safety Monitor", nodeCount: 4, status: "draft" }
   ];
-
+  
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-1">Automation Builder</h1>
-          <p className="text-muted-foreground">Create and manage intelligent workflows for your fleet operations</p>
+          <p className="text-muted-foreground">Create custom workflows for your fleet operations</p>
         </div>
         
         <div className="flex flex-wrap gap-3">
@@ -48,249 +137,262 @@ export default function AutomationBuilder() {
             metric="31% Efficiency Gain"
             ourValue="31%"
             competitorName="Al Thuraya"
-            competitorValue="20%"
+            competitorValue="21%"
           />
+          <Badge variant="outline" className="bg-awr-primary/5 text-awr-primary">
+            Drag & Drop Interface
+          </Badge>
         </div>
       </div>
-
-      <Tabs defaultValue="builder" className="space-y-4">
-        <div className="flex justify-between">
-          <TabsList>
-            <TabsTrigger value="builder" className="gap-2">
-              <Code className="h-4 w-4" />
-              <span>Workflow Builder</span>
-            </TabsTrigger>
-            <TabsTrigger value="workflows" className="gap-2">
-              <Zap className="h-4 w-4" />
-              <span>My Workflows</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <Button className="gap-2" size="sm">
-            <Save className="h-4 w-4" />
-            <span>Save Workflow</span>
-          </Button>
-        </div>
-        
-        <TabsContent value="builder" className="p-0 border-none">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1 space-y-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Actions</CardTitle>
-                  <CardDescription>Drag and drop to build workflows</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">TRIGGERS</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Car className="h-4 w-4 text-awr-primary" />
-                      <span className="text-sm">Vehicle Status Change</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      <span className="text-sm">Safety Alert Triggered</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Calendar className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm">Maintenance Due</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs font-medium text-muted-foreground mt-4 mb-2">ACTIONS</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Send className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">Send Notification</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Calendar className="h-4 w-4 text-purple-500" />
-                      <span className="text-sm">Schedule Maintenance</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Check className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm">Mark Status Resolved</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs font-medium text-muted-foreground mt-4 mb-2">CONDITIONS</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <Code className="h-4 w-4 text-orange-500" />
-                      <span className="text-sm">If Condition</span>
-                    </div>
-                    <div className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-accent/50">
-                      <ArrowRight className="h-4 w-4 text-pink-500" />
-                      <span className="text-sm">Wait Until</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">AI Insights</CardTitle>
-                    <Badge className="bg-awr-primary text-white">New</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-awr-primary/5 rounded-lg p-3 border border-awr-primary/20 space-y-2">
-                    <div className="flex gap-2">
-                      <div className="h-6 w-6 rounded-full bg-awr-primary/20 flex items-center justify-center flex-shrink-0">
-                        <Zap className="h-3 w-3 text-awr-primary" />
-                      </div>
-                      <p className="text-sm font-medium">Workflow Improvement</p>
-                    </div>
-                    <p className="text-xs">Add a refueling alert when fuel drops below 15% to prevent unexpected stops.</p>
-                    <Button variant="outline" size="sm" className="w-full text-xs mt-1">
-                      Apply Suggestion
-                    </Button>
-                  </div>
-                  
-                  <div className="mt-3">
-                    <p className="text-xs text-muted-foreground">Predicted efficiency improvement: +4.5%</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="lg:col-span-3">
-              <Card className="h-full">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle>Workflow Canvas</CardTitle>
-                      <CardDescription>Build your automation workflow</CardDescription>
-                    </div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2">
-                          <Info className="h-4 w-4" />
-                          <span>Help</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-80">
-                        <div className="space-y-2">
-                          <h4 className="font-medium">How to Build a Workflow</h4>
-                          <p className="text-sm text-muted-foreground">Drag actions from the left panel and connect them to create automated processes.</p>
-                          <ul className="space-y-1 text-sm">
-                            <li className="flex gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>Start with a trigger event</span>
-                            </li>
-                            <li className="flex gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>Add conditions to control flow</span>
-                            </li>
-                            <li className="flex gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>End with actions to take</span>
-                            </li>
-                          </ul>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {/* Workflow Builder Canvas (placeholder for drag-and-drop interface) */}
-                  <div className="bg-slate-50 border border-dashed border-slate-200 rounded-lg h-[600px] flex flex-col items-center justify-center">
-                    {/* This would be replaced with an actual workflow builder UI */}
-                    <div className="text-center space-y-2">
-                      <div className="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto">
-                        <PlusCircle className="h-8 w-8 text-slate-400" />
-                      </div>
-                      <h3 className="font-medium">Start Building Your Workflow</h3>
-                      <p className="text-sm text-muted-foreground max-w-md">Drag items from the Actions panel and drop them here to start building your automation workflow.</p>
-                    </div>
-                    
-                    {/* Sample workflow nodes (would be dynamic in real implementation) */}
-                    <div className="absolute top-[200px] left-[200px] bg-white border rounded-md p-3 w-60 shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center">
-                          <Car className="h-3 w-3 text-blue-500" />
-                        </div>
-                        <span className="font-medium text-sm">Fuel Level Below 20%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="absolute top-[280px] left-[240px] h-10 w-1 bg-slate-300"></div>
-                    
-                    <div className="absolute top-[300px] left-[200px] bg-white border rounded-md p-3 w-60 shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
-                          <Send className="h-3 w-3 text-green-500" />
-                        </div>
-                        <span className="font-medium text-sm">Send Alert to Driver</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+      
+      <div className="bg-accent/20 p-4 rounded-lg">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-medium">Current Workflow: <span className="text-awr-primary">Fuel Alert System</span></h2>
+            <p className="text-sm text-muted-foreground">Last edited: 2 hours ago</p>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="workflows">
+          
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" className="gap-1">
+              <Save className="h-4 w-4" />
+              <span>Save</span>
+            </Button>
+            <Button size="sm" className="gap-1">
+              <Play className="h-4 w-4" />
+              <span>Activate</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-1 space-y-6">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>My Workflows</CardTitle>
-                <Button size="sm" className="gap-2">
-                  <PlusCircle className="h-4 w-4" />
-                  <span>New Workflow</span>
-                </Button>
-              </div>
-              <CardDescription>View and manage your automation workflows</CardDescription>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Code className="h-4 w-4 text-muted-foreground" />
+                Components
+              </CardTitle>
+              <CardDescription>Drag and drop to canvas</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {workflows.map((workflow) => (
-                  <div 
-                    key={workflow.id} 
-                    className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                      activeWorkflow === workflow.id ? 'border-awr-primary bg-awr-primary/5' : 'hover:bg-accent/50'
-                    }`}
-                    onClick={() => setActiveWorkflow(workflow.id)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-awr-primary/10 flex items-center justify-center">
-                          <Zap className="h-5 w-5 text-awr-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{workflow.name}</h3>
-                          <p className="text-sm text-muted-foreground">{workflow.description}</p>
-                        </div>
-                      </div>
-                      <Badge variant={workflow.status === 'active' ? 'success' : 'outline'}>
-                        {workflow.status === 'active' ? 'Active' : 'Draft'}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t text-xs text-muted-foreground">
-                      <span>Last edited: {new Date(workflow.lastEdited).toLocaleDateString("en-AE", { year: "numeric", month: "short", day: "numeric" })}</span>
-                      <div className="flex gap-2">
-                        <button className="text-awr-primary hover:underline">Edit</button>
-                        <button className="text-awr-primary hover:underline">Clone</button>
-                        <button className="text-red-500 hover:underline">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            <CardContent className="space-y-3 p-3">
+              <div className="space-y-1 mb-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Triggers</h3>
               </div>
+              
+              {nodeLibrary.filter(node => node.type === 'trigger').map(node => (
+                <div 
+                  key={node.id}
+                  className={`flex items-center gap-2 p-3 rounded-md border cursor-pointer hover:bg-accent ${node.color}`}
+                  onClick={() => addNode(node)}
+                >
+                  <node.icon className="h-5 w-5" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{node.title}</p>
+                    <p className="text-xs truncate">{node.description}</p>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="space-y-1 mt-4 mb-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Conditions</h3>
+              </div>
+              
+              {nodeLibrary.filter(node => node.type === 'condition').map(node => (
+                <div 
+                  key={node.id}
+                  className={`flex items-center gap-2 p-3 rounded-md border cursor-pointer hover:bg-accent ${node.color}`}
+                  onClick={() => addNode(node)}
+                >
+                  <node.icon className="h-5 w-5" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{node.title}</p>
+                    <p className="text-xs truncate">{node.description}</p>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="space-y-1 mt-4 mb-2">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</h3>
+              </div>
+              
+              {nodeLibrary.filter(node => node.type === 'action' || node.type === 'notification').map(node => (
+                <div 
+                  key={node.id}
+                  className={`flex items-center gap-2 p-3 rounded-md border cursor-pointer hover:bg-accent ${node.color}`}
+                  onClick={() => addNode(node)}
+                >
+                  <node.icon className="h-5 w-5" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{node.title}</p>
+                    <p className="text-xs truncate">{node.description}</p>
+                  </div>
+                </div>
+              ))}
             </CardContent>
           </Card>
           
-          <div className="mt-6 flex items-center justify-center">
-            <div className="max-w-lg text-center">
-              <p className="text-muted-foreground">Automation workflows increase operational efficiency by 31% compared to manual processes.</p>
-              <p className="text-sm text-muted-foreground mt-1">The AI-driven recommendations can further improve efficiency by analyzing your fleet's unique patterns.</p>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Workflow className="h-4 w-4 text-muted-foreground" />
+                Saved Workflows
+              </CardTitle>
+              <CardDescription>Your automation templates</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y">
+                {workflows.map(workflow => (
+                  <div 
+                    key={workflow.id} 
+                    className={`p-3 hover:bg-accent/50 cursor-pointer ${activeWorkflow === workflow.id ? 'bg-accent/70' : ''}`}
+                    onClick={() => setActiveWorkflow(workflow.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-sm">{workflow.name}</p>
+                      <Badge variant={workflow.status === "active" ? "success" : "outline"} className="text-xs">
+                        {workflow.status}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{workflow.nodeCount} components</p>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="p-3 border-t">
+                <Button variant="outline" className="w-full gap-1 text-xs h-8">
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>New Workflow</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="lg:col-span-4">
+          <Card className="h-full">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-awr-primary" />
+                    Workflow Canvas
+                  </CardTitle>
+                  <CardDescription>Drag components to build your automation</CardDescription>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Input placeholder="Search components..." className="max-w-[200px] h-8 text-sm" />
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Add</span>
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="min-h-[600px]">
+              {activeNodes.length === 0 ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center space-y-2 max-w-md">
+                    <Workflow className="h-12 w-12 text-muted-foreground/50 mx-auto" />
+                    <h3 className="text-lg font-medium">Start Building Your Workflow</h3>
+                    <p className="text-muted-foreground">Drag components from the sidebar to create your automation flow. Start with a trigger, add conditions, and finish with actions.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 p-4">
+                  {activeNodes.map((node, index) => (
+                    <div key={node.id} className="relative flex">
+                      {/* Connector line */}
+                      {index > 0 && (
+                        <div className="absolute top-0 left-6 -mt-4 w-0.5 h-4 bg-border"></div>
+                      )}
+                      
+                      {/* Node item */}
+                      <div className={`flex-1 p-4 rounded-lg border ${node.color}`}>
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-md bg-background/80">
+                            <node.icon className="h-6 w-6" />
+                          </div>
+                          
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <h3 className="font-medium">{node.title}</h3>
+                              <Badge variant="outline">{node.type}</Badge>
+                            </div>
+                            <p className="text-sm mt-1">{node.description}</p>
+                            
+                            {/* Component settings - placeholders */}
+                            {node.type === 'trigger' && (
+                              <div className="mt-3 grid grid-cols-2 gap-2">
+                                <div className="text-xs">
+                                  <span className="font-medium">Threshold:</span>
+                                  <span className="ml-1">20%</span>
+                                </div>
+                                <div className="text-xs">
+                                  <span className="font-medium">Applies to:</span>
+                                  <span className="ml-1">All vehicles</span>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {node.type === 'condition' && (
+                              <div className="mt-3 text-xs">
+                                <span className="font-medium">Condition:</span>
+                                <span className="ml-1">IF [Vehicle Type] = SUV THEN...</span>
+                              </div>
+                            )}
+                            
+                            {node.type === 'action' && (
+                              <div className="mt-3 text-xs">
+                                <span className="font-medium">Action:</span>
+                                <span className="ml-1">Schedule maintenance at nearest service center</span>
+                              </div>
+                            )}
+                            
+                            {node.type === 'notification' && (
+                              <div className="mt-3 text-xs">
+                                <span className="font-medium">Recipients:</span>
+                                <span className="ml-1">Fleet Manager, Vehicle Driver</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Copy className="h-4 w-4" />
+                              <span className="sr-only">Copy</span>
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => removeNode(node.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              <span className="sr-only">Delete</span>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Add component button */}
+                  {activeNodes.length > 0 && (
+                    <div className="flex justify-center">
+                      <Button variant="outline" className="mt-2 gap-1" onClick={() => {}}>
+                        <Plus className="h-4 w-4" />
+                        <span>Add Component</span>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
