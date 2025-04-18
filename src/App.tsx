@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,45 +16,43 @@ import NotFound from "./pages/NotFound";
 import { VoiceAssistant } from "./components/ui/voice-assistant";
 import { useState, useEffect } from "react";
 import { GuidedTour } from "./components/ui/guided-tour";
+import { ProactiveAlerts } from "./components/ui/proactive-alerts";
 
 const queryClient = new QueryClient();
 
-// Tour steps configuration for guided tour
 const tourSteps = [
   {
     target: "nav a[href='/']",
     title: "Dashboard",
     content: "View your fleet's key performance metrics and analytics at a glance.",
-    position: "right"
+    position: "right" as const
   },
   {
     target: "nav a[href='/map']",
     title: "Interactive Map",
     content: "Track your vehicles in real-time with AI-optimized routes and traffic analysis.",
-    position: "right"
+    position: "right" as const
   },
   {
     target: "nav a[href='/vehicles']",
     title: "Vehicle Management",
     content: "View detailed information about each vehicle in your fleet.",
-    position: "right"
+    position: "right" as const
   },
   {
     target: "nav a[href='/drivers']",
     title: "Driver Management",
     content: "Monitor driver safety scores and behavior analytics.",
-    position: "right"
+    position: "right" as const
   }
 ];
 
 const App = () => {
   const [showTour, setShowTour] = useState(false);
   
-  // Show guided tour for first-time users
   useEffect(() => {
     const hasSeenTour = localStorage.getItem('hasSeenTour');
     if (!hasSeenTour) {
-      // Wait for the components to render before starting tour
       const timer = setTimeout(() => {
         setShowTour(true);
       }, 1000);
@@ -89,10 +86,8 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
           
-          {/* Voice Assistant */}
-          <VoiceAssistant />
+          <ProactiveAlerts />
           
-          {/* Guided Tour */}
           {showTour && (
             <GuidedTour 
               steps={tourSteps} 

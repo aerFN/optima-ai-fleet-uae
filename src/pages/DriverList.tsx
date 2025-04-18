@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -360,7 +359,10 @@ export default function DriverList() {
                               "text-red-500"
                             } />
                           </div>
-                          <Progress value={driver.safetyScore} className="h-2" indicatorClassName={getSafetyColor(driver.safetyScore)} />
+                          <Progress 
+                            value={driver.safetyScore} 
+                            className={`h-2 ${getSafetyColor(driver.safetyScore)}`}
+                          />
                         </div>
                         
                         <div className="flex items-center gap-2">
