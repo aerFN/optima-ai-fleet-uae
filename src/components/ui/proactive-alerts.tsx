@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { AlertTriangle, Check, Route, Tool, Bot } from "lucide-react";
+import { AlertTriangle, Check, Route, Wrench, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -57,7 +57,7 @@ export function ProactiveAlerts() {
         {alerts.map((alert) => (
           <div key={alert.id} className="border rounded-lg p-3 hover:bg-accent/40">
             <div className="flex items-start gap-3">
-              {alert.type === "maintenance" && <Tool className="h-5 w-5 text-amber-500" />}
+              {alert.type === "maintenance" && <Wrench className="h-5 w-5 text-amber-500" />}
               {alert.type === "route" && <Route className="h-5 w-5 text-blue-500" />}
               {alert.type === "safety" && <AlertTriangle className="h-5 w-5 text-red-500" />}
               

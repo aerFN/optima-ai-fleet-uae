@@ -38,7 +38,7 @@ export function VoiceAssistant() {
       toast({
         title: "Command executed",
         description: "Your request has been processed successfully.",
-        variant: "success",
+        variant: "default",
       });
     }, 1000);
   };
